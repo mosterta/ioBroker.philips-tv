@@ -242,6 +242,7 @@ let connectionAlive: boolean = false;
 
 async function pingThread() {
 	const oldValue = connectionAlive;
+	let pingValue: integer = 10000;
 	connectionAlive = await checkConnection();
 	await adapter.$setStateChanged("info.connection", connectionAlive, true);
 
@@ -253,14 +254,16 @@ async function pingThread() {
 		}
 		// update information
 		await poll();
+		pingValue = 1000;
 	} else {
 		if (oldValue) {
 			// connection is now dead
 			_.log(`The TV with host ${hostname} is not reachable anymore.`, "info");
 		}
+		pingValue = 10000;
 	}
 
-	pingTimer = setTimeout(pingThread, 10000);
+	pingTimer = setTimeout(pingThread, pingValue);
 }
 
 // Unbehandelte Fehler tracen
