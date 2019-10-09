@@ -278,7 +278,8 @@ async function updateTVInfo(info: {
 async function pingThread() {
 
 	const oldValue = connectionAlive;
-
+        let pollValue: integer = 10000;
+	
 	// if this is the first time connecting to the TV, determine the API version
 	if (api == null) {
 		try {
@@ -331,14 +332,16 @@ async function pingThread() {
 		}
 		// update information
 		await poll();
+		pollValue = 500;
 	} else {
 		if (oldValue) {
 			// connection is now dead
 			_.log(`The TV at ${hostname} is not reachable anymore.`, "info");
 		}
+		pollValue = 10000;
 	}
 
-	pingTimer = setTimeout(pingThread, 10000);
+	pingTimer = setTimeout(pingThread, pollValue);
 }
 
 // Unbehandelte Fehler tracen
